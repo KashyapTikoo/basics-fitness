@@ -551,7 +551,7 @@
             row.className = 'workout-row exercise-row';
             row.innerHTML = `
                 <input type="text" class="ex-name" value="${ex.name || ''}" placeholder="Exercise name">
-                <input type="number" class="ex-wt" value="${ex.wt || ''}" placeholder="lbs">
+                <input type="number" class="ex-wt" value="${ex.wt || ''}" placeholder="kgs">
                 <input type="number" class="ex-reps" value="${ex.reps || ''}" placeholder="reps">
                 <button class="delete-btn" onclick="removeExerciseField(${i})">×</button>
             `;

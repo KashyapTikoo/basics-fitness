@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BASICS — Minimalist Fitness</title>
+    
+    <style>
+        :root {
+            --bg-color: #060608;
+            --card-bg: rgba(26, 26, 32, 0.65);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --card-border-hover: rgba(255, 255, 255, 0.2);
+            --text-main: #f5f5f7;
+            --text-muted: #86868b;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(41, 151, 255, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(147, 51, 234, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(20, 20, 25, 1) 100%);
+            background-attachment: fixed;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 36px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin: 0 0 8px 0;
+            background: linear-gradient(180deg, #ffffff 0%, #a1a1a6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin: 0;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .card:hover {
+            border-color: var(--card-border-hover);
+            box-shadow: 0 20px 50px rgba(0, 113, 227, 0.12);
+        }
+
+        h2 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 18px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .streak-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .streak-count {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #ffffff;
+            letter-spacing: -0.01em;
+        }
+
+        .week-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .day-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 14px 4px;
+            font-size: 0.95rem;
+            transition: all 0.25s ease;
+        }
+
+        .day-box.completed {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: #ffffff;
+            color: #000000;
+            font-weight: 700;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .day-box .day-name {
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            display: block;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .day-box.completed .day-name {
+            color: rgba(0, 0, 0, 0.6);
+        }
+
+        /* Dynamic Editable Habit Items */
+        .checklist-item {
+            display: grid;
+            grid-template-columns: 32px 1fr 40px;
+            gap: 12px;
+            align-items: center;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            margin-bottom: 10px;
+            transition: all 0.25s ease;
+        }
+
+        .checklist-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .checklist-item input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 26px;
+            height: 26px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .checklist-item input[type="checkbox"]:checked {
+            background: #ffffff;
+            border-color: #ffffff;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+
+        .checklist-item input[type="checkbox"]:checked::after {
+            content: "✓";
+            color: #000000;
+            font-weight: 900;
+            font-size: 0.95rem;
+        }
+
+        .checklist-item.checked input[type="text"].habit-text {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            font-size: 1rem;
+            color: white;
+            box-sizing: border-box;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus {
+            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(0, 0, 0, 0.7);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+        }
+
+        .delete-btn {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 10px;
+            height: 44px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .delete-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        .secondary-btn {
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            width: 100%;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .secondary-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Workout Grid Styles */
+        .workout-row {
+            display: grid;
+            grid-template-columns: 2.2fr 1fr 1fr 40px;
+            gap: 12px;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+
+        .workout-header-row {
+            display: grid;
+            grid-template-columns: 2.2fr 1fr 1fr 40px;
+            gap: 12px;
+            margin-bottom: 10px;
+            padding: 0 4px;
+        }
+
+        .philosophy-box {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 14px;
+            border-left: 3px solid #ffffff;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            border-right: 1px solid rgba(255, 255, 255, 0.04);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        button.primary-btn {
+            background: #ffffff;
+            color: #000000;
+            border: none;
+            padding: 16px;
+            width: 100%;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            margin-top: 16px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        button.primary-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 25px rgba(255, 255, 255, 0.35);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+        }
+
+        footer a {
+            color: var(--text-muted);
+            text-decoration: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            margin: 0 10px;
+            transition: color 0.2s;
+        }
+
+        footer a:hover {
+            color: #ffffff;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 100;
+        }
+        .modal-content {
+            background: rgba(30, 30, 36, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(40px);
+            padding: 30px;
+            border-radius: 24px;
+            max-width: 420px;
+            width: 100%;
+            font-size: 1rem;
+            line-height: 1.6;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.8);
+        }
+        .modal-content h3 { margin-top: 0; color: #ffffff; letter-spacing: -0.02em; font-size: 1.3rem;}
+        .close-btn {
+            background: #ffffff;
+            color: #000000;
+            margin-top: 24px;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>BASICS</h1>
+        <p>No noise. Protein, creatine, clean food, movement.</p>
+    </header>
+
+    <!-- 7-Day History & Streak Tracker -->
+    <div class="card">
+        <div class="streak-header">
+            <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); letter-spacing: 0.12em; text-transform: uppercase;">Weekly Consistency</span>
+            <span class="streak-count" id="streakDisplay">🔥 0 Days</span>
+        </div>
+        <div class="week-grid" id="weekGrid"></div>
+    </div>
+
+    <!-- Editable Today's Essentials -->
+    <div class="card">
+        <h2>Today's Essentials</h2>
+        <div id="essentialsList">
+            <!-- Dynamically populated via JS -->
+        </div>
+        <button class="secondary-btn" onclick="addEssentialField()">+ Add Essential</button>
+    </div>
+
+    <!-- Editable Workout Log -->
+    <div class="card">
+        <h2>Core Lifts Log</h2>
+        <div class="workout-header-row">
+            <span style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; letter-spacing: 0.1em;">Exercise</span>
+            <span style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; letter-spacing: 0.1em;">Weight</span>
+            <span style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; letter-spacing: 0.1em;">Reps</span>
+            <span></span>
+        </div>
+        
+        <div id="exerciseList"></div>
+
+        <button class="secondary-btn" onclick="addExerciseField()">+ Add Exercise</button>
+        <button class="primary-btn" onclick="saveDataState()">Save Today's Progress</button>
+    </div>
+
+    <!-- The No-BS Reality Check -->
+    <div class="card">
+        <h2>The Bullshit Detector</h2>
+        <div class="philosophy-box">
+            "You don't need a 12-supplement stack, a $100 pre-workout, or an overly complicated routine to transform your physique. Consistency with the fundamentals beats optimization every single time."
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 BASICS. All rights reserved.</p>
+        <div style="margin-top: 10px;">
+            <a onclick="openModal('privacy')">Privacy</a> | 
+            <a onclick="openModal('terms')">Terms</a>
+        </div>
+    </footer>
+</div>
+
+<!-- Legal Modal -->
+<div class="modal" id="legalModal">
+    <div class="modal-content">
+        <h3 id="modalTitle">Privacy Policy</h3>
+        <p id="modalText" style="color: var(--text-muted);"></p>
+        <button class="close-btn" onclick="closeModal()">Close</button>
+    </div>
+</div>
+
+<script>
+    const TODAY_KEY = new Date().toISOString().slice(0, 10);
+    let appData = JSON.parse(localStorage.getItem('basics_fitness_data')) || {};
+
+    if (!appData[TODAY_KEY]) {
+        appData[TODAY_KEY] = { 
+            essentials: [
+                { text: 'Hit Protein Target', checked: false },
+                { text: 'Took Creatine (5g)', checked: false },
+                { text: 'Home-Cooked Clean Meal', checked: false },
+                { text: 'Daily Workout / Movement', checked: false }
+            ], 
+            exercises: [
+                { name: 'Squat / Press', wt: '', reps: '' },
+                { name: 'Push-ups / Bench', wt: '', reps: '' },
+                { name: 'Rows / Pull-ups', wt: '', reps: '' }
+            ] 
+        };
+    }
+
+    // Fallback if transitioning from old array format
+    if (!appData[TODAY_KEY].essentials) {
+        appData[TODAY_KEY].essentials = [
+            { text: 'Hit Protein Target', checked: false },
+            { text: 'Took Creatine (5g)', checked: false },
+            { text: 'Home-Cooked Clean Meal', checked: false },
+            { text: 'Daily Workout / Movement', checked: false }
+        ];
+    }
+
+    function syncDomToData() {
+        // Capture Essentials
+        const essentialRows = document.querySelectorAll('.essential-row');
+        const updatedEssentials = [];
+        essentialRows.forEach(row => {
+            const text = row.querySelector('.habit-text').value;
+            const checked = row.querySelector('.habit-checkbox').checked;
+            updatedEssentials.push({ text, checked });
+        });
+        appData[TODAY_KEY].essentials = updatedEssentials;
+
+        // Capture Exercises
+        const exerciseRows = document.querySelectorAll('.exercise-row');
+        const updatedExercises = [];
+        exerciseRows.forEach(row => {
+            const name = row.querySelector('.ex-name').value;
+            const wt = row.querySelector('.ex-wt').value;
+            const reps = row.querySelector('.ex-reps').value;
+            updatedExercises.push({ name, wt, reps });
+        });
+        appData[TODAY_KEY].exercises = updatedExercises;
+    }
+
+    function saveDataState() {
+        syncDomToData();
+        localStorage.setItem('basics_fitness_data', JSON.stringify(appData));
+        renderApp();
+        alert('Today\'s progress saved successfully.');
+    }
+
+    function addEssentialField() {
+        syncDomToData();
+        appData[TODAY_KEY].essentials.push({ text: '', checked: false });
+        renderEssentials();
+    }
+
+    function removeEssentialField(index) {
+        syncDomToData();
+        appData[TODAY_KEY].essentials.splice(index, 1);
+        renderEssentials();
+    }
+
+    function addExerciseField() {
+        syncDomToData();
+        appData[TODAY_KEY].exercises.push({ name: '', wt: '', reps: '' });
+        renderExercises();
+    }
+
+    function removeExerciseField(index) {
+        syncDomToData();
+        appData[TODAY_KEY].exercises.splice(index, 1);
+        renderExercises();
+    }
+
+    function renderEssentials() {
+        const container = document.getElementById('essentialsList');
+        container.innerHTML = '';
+        const essentials = appData[TODAY_KEY].essentials || [];
+
+        essentials.forEach((item, i) => {
+            const row = document.createElement('div');
+            row.className = `checklist-item essential-row ${item.checked ? 'checked' : ''}`;
+            row.innerHTML = `
+                <input type="checkbox" class="habit-checkbox" ${item.checked ? 'checked' : ''} onchange="toggleHabitCheck(${i}, this)">
+                <input type="text" class="habit-text" value="${item.text || ''}" placeholder="Habit description">
+                <button class="delete-btn" onclick="removeEssentialField(${i})">×</button>
+            `;
+            container.appendChild(row);
+        });
+    }
+
+    function toggleHabitCheck(i, checkbox) {
+        syncDomToData();
+        appData[TODAY_KEY].essentials[i].checked = checkbox.checked;
+        localStorage.setItem('basics_fitness_data', JSON.stringify(appData));
+        renderEssentials();
+        renderWeekGrid();
+    }
+
+    function renderExercises() {
+        const container = document.getElementById('exerciseList');
+        container.innerHTML = '';
+        const exercises = appData[TODAY_KEY].exercises || [];
+        
+        exercises.forEach((ex, i) => {
+            const row = document.createElement('div');
+            row.className = 'workout-row exercise-row';
+            row.innerHTML = `
+                <input type="text" class="ex-name" value="${ex.name || ''}" placeholder="Exercise name">
+                <input type="number" class="ex-wt" value="${ex.wt || ''}" placeholder="lbs">
+                <input type="number" class="ex-reps" value="${ex.reps || ''}" placeholder="reps">
+                <button class="delete-btn" onclick="removeExerciseField(${i})">×</button>
+            `;
+            container.appendChild(row);
+        });
+    }
+
+    function renderApp() {
+        renderEssentials();
+        renderExercises();
+        renderWeekGrid();
+    }
+
+    function renderWeekGrid() {
+        const grid = document.getElementById('weekGrid');
+        grid.innerHTML = '';
+        
+        let currentStreak = 0;
+        let streakCounting = true;
+        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        
+        for (let i = 6; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            const dateStr = d.toISOString().slice(0, 10);
+            const dayName = days[d.getDay()];
+            
+            const dayRecord = appData[dateStr];
+            // Completed if all essentials are present and checked
+            const isCompleted = dayRecord && dayRecord.essentials && dayRecord.essentials.length > 0 && dayRecord.essentials.every(e => e.checked);
+
+            if (isCompleted && streakCounting) {
+                currentStreak++;
+            } else if (!isCompleted && i !== 0) {
+                streakCounting = false;
+            }
+
+            const box = document.createElement('div');
+            box.className = `day-box ${isCompleted ? 'completed' : ''}`;
+            box.innerHTML = `<span class="day-name">${dayName}</span>${isCompleted ? '✓' : '·'}`;
+            grid.appendChild(box);
+        }
+
+        document.getElementById('streakDisplay').innerText = `🔥 ${currentStreak} Days`;
+    }
+
+    function openModal(type) {
+        const modal = document.getElementById('legalModal');
+        const title = document.getElementById('modalTitle');
+        const text = document.getElementById('modalText');
+        
+        if (type === 'privacy') {
+            title.innerText = 'Privacy Policy';
+            text.innerText = 'All data is stored securely and locally on your device via browser LocalStorage. We do not track, collect, or harvest personal health data.';
+        } else {
+            title.innerText = 'Terms of Use';
+            text.innerText = 'BASICS is a minimalist self-tracker designed to support daily consistency. It does not replace professional medical or nutritional advice.';
+        }
+        modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('legalModal').style.display = 'none';
+    }
+
+    renderApp();
+</script>
+
+</body>
+</html>

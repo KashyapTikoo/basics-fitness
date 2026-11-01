@@ -36,15 +36,18 @@
         /* Nav Bar */
         .nav-bar {
             display: flex;
+            flex-direction: row; /* Ensures items stay side-by-side */
             justify-content: center;
-            gap: 16px;
+            align-items: center;
+            gap: 12px;
             margin-bottom: 32px;
+            width: 100%;
         }
 
         .nav-link {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 10px 18px;
+            padding: 10px 24px;
             border-radius: 12px;
             color: var(--text-muted);
             text-decoration: none;
@@ -58,11 +61,6 @@
             background: #ffffff;
             color: #000000;
             border-color: #ffffff;
-        }
-        .container {
-            width: 100%;
-            max-width: 760px;
-            margin: 0 auto;
         }
 
         header {
